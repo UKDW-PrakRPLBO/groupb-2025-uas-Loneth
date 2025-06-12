@@ -5,6 +5,7 @@ import org.uas.repository.*;
 import org.uas.util.DBConnectionManager;
 import org.uas.util.SessionManager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -94,10 +95,20 @@ public class UASApplication {
         String username = scanner.nextLine();
         System.out.print("Masukan password baru: ");
         String password = scanner.nextLine();
+
+        if (userRepository.updateUser(email, username, password)) {
+            tampilkanSemuaUser();
+        }
     }
 
     private void tampilkanSemuaUser() {
+        List<User> users = userRepository.findAll();
 
+        for (User user : users) {
+            System.out.println("- " + user.getUsername());
+        }
+
+        System.out.println("\n");
     }
 
     private void exitApps() {
@@ -111,6 +122,12 @@ public class UASApplication {
         String username = scanner.nextLine();
         System.out.print("Enter password: ");
         String password = scanner.nextLine();
+
+        if (userRepository.authenticateUser(username, password)) {
+            SessionManager.getInstance().login();
+        } else {
+            System.out.println("Login failed!! Please check again.");
+        }
     }
 
     private void insertUser(Scanner scanner) {
